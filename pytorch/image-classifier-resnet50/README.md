@@ -1,6 +1,6 @@
-# MobileNet Classifier
+# ResNet Classifier
 
-该示例将一个 onnx 格式的 mobilenet v2 模型部署到 OpenBayes。
+该示例是 [模型部署 - 快速开始](https://openbayes.com/docs/bayesserving-quickstart/) 的代码库，使用 PyTorch 的预训练模型在 OpenBayes 创建第一个模型部署。
 
 ## 下载模型
 
