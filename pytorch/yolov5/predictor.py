@@ -12,6 +12,8 @@ from utils.general import (
     set_logging)
 from utils.datasets import letterbox
 
+import openbayes_serving as serv
+
 
 def get_url_image(url_image):
     """
@@ -24,7 +26,7 @@ def get_url_image(url_image):
 
 
 class PythonPredictor:
-    def __init__(self, config):
+    def __init__(self):
         self.weights = 'yolov5s.pt'
         imgsz = 640
 
@@ -84,3 +86,7 @@ class PythonPredictor:
         predicted_boxes, predicted_classes = self.postprocess(output, threshold, img0, img)
 
         return predicted_boxes, predicted_classes
+
+
+if __name__ == '__main__':
+    serv.run(PythonPredictor)

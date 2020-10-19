@@ -6,9 +6,11 @@ from PIL import Image
 from torchvision import models
 from torchvision import transforms
 
+import openbayes_serving as serv
+
 
 class PythonPredictor:
-    def __init__(self, config):
+    def __init__(self):
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         print(f"using device: {self.device}")
 
@@ -47,3 +49,7 @@ class PythonPredictor:
         predicted_boxes = predicted_boxes[: predicted_t + 1]
         predicted_class = predicted_class[: predicted_t + 1]
         return predicted_boxes, predicted_class
+
+
+if __name__ == '__main__':
+    serv.run(PythonPredictor)

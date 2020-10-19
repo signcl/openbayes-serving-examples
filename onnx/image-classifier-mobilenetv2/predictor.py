@@ -1,3 +1,5 @@
+import openbayes_serving as serv
+
 import numpy as np
 import cv2, requests
 import json
@@ -57,17 +59,17 @@ def postprocess(results):
     return result
 
 
-class ONNXPredictor:
-    def __init__(self, onnx_client, config):
+class Predictor:
+    def __init__(self, onnx):
         # onnx client
-        self.client = onnx_client
+        self.onnx = onnx
 
         # for image classifiers
         classes = json.load(open('imagenet_class_index.json'))
         self.image_classes = [classes[str(k)][1] for k in range(len(classes))]
         self.resize_value = 224
 
-    def predict(self, payload, query_params):
+    def predict(self, payload):
         # get request params
         img_url = payload["url"]
 
@@ -77,10 +79,14 @@ class ONNXPredictor:
         img = preprocess(img)
 
         # predict
-        results = self.client.predict(img)[0]
+        results = self.onnx.run(None, {'data': img})[0]
 
         # interpret result
         result = postprocess(results)
         predicted_label = self.image_classes[result]
 
         return {"label": predicted_label}
+
+
+if __name__ == '__main__':
+    serv.run(Predictor)

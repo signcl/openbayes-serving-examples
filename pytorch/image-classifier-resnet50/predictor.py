@@ -5,6 +5,8 @@ import json
 import requests
 from torchvision import models, transforms
 
+import openbayes_serving as serv
+
 
 def get_url_image(url_image):
     resp = requests.get(url_image, stream=True).raw
@@ -15,7 +17,7 @@ def get_url_image(url_image):
 
 
 class PythonPredictor:
-    def __init__(self, config):
+    def __init__(self):
         # 加载分类元数据
         classes = json.load(open('classes.json'))
         self.idx2label = [classes[str(k)][1] for k in range(len(classes))]
@@ -61,3 +63,7 @@ class PythonPredictor:
         top5_labels = top5_labels[::-1]
 
         return top5_labels
+
+
+if __name__ == '__main__':
+    serv.run(PythonPredictor)
