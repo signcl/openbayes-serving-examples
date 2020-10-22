@@ -1,14 +1,20 @@
+# -*- coding: utf-8 -*-
+
+# -- stdlib --
 from io import BytesIO
 
+# -- third party --
+from PIL import Image
+from torchvision import models, transforms
 import requests
 import torch
-from PIL import Image
-from torchvision import models
-from torchvision import transforms
 
 import openbayes_serving as serv
 
+# -- own --
 
+
+# -- code --
 class PythonPredictor:
     def __init__(self):
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -26,9 +32,9 @@ class PythonPredictor:
 
         self.model = model
 
-    def predict(self, payload):
-        threshold = float(payload["threshold"])
-        image = requests.get(payload["url"]).content
+    def predict(self, json):
+        threshold = float(json["threshold"])
+        image = requests.get(json["url"]).content
         img_pil = Image.open(BytesIO(image))
         img_tensor = self.preprocess(img_pil).to(self.device)
         img_tensor.unsqueeze_(0)

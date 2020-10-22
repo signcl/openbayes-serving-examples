@@ -1,20 +1,21 @@
-from io import BytesIO
+# -*- coding: utf-8 -*-
 
-import requests
+# -- stdlib --
+# -- third party --
 import cv2
-import torch
 import numpy as np
-import time
-
-from models.experimental import attempt_load
-from utils.general import (
-    check_img_size, non_max_suppression, scale_coords,
-    set_logging)
-from utils.datasets import letterbox
+import requests
+import torch
 
 import openbayes_serving as serv
 
+# -- own --
+from models.experimental import attempt_load
+from utils.datasets import letterbox
+from utils.general import check_img_size, non_max_suppression, scale_coords
 
+
+# -- code --
 def get_url_image(url_image):
     """
     Get numpy image from URL image.
@@ -25,7 +26,7 @@ def get_url_image(url_image):
     return image
 
 
-class PythonPredictor:
+class Predictor:
     def __init__(self):
         self.weights = 'yolov5s.pt'
         imgsz = 640
@@ -71,9 +72,9 @@ class PythonPredictor:
 
         return boxes, classes
 
-    def predict(self, payload):
-        threshold = float(payload["threshold"])
-        img_url = payload["url"]
+    def predict(self, json):
+        threshold = float(json["threshold"])
+        img_url = json["url"]
 
         # process the input
         img0 = get_url_image(img_url)
@@ -89,4 +90,4 @@ class PythonPredictor:
 
 
 if __name__ == '__main__':
-    serv.run(PythonPredictor)
+    serv.run(Predictor)

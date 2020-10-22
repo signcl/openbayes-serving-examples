@@ -1,11 +1,20 @@
+# -*- coding: utf-8 -*-
+
+# -- stdlib --
+import json
+
+# -- third party --
+from scipy.special import softmax
+import cv2
+import numpy as np
+import requests
+
 import openbayes_serving as serv
 
-import numpy as np
-import cv2, requests
-import json
-from scipy.special import softmax
+# -- own --
 
 
+# -- code --
 def get_url_image(url_image):
     """
     Get numpy image from URL image.
@@ -69,9 +78,9 @@ class Predictor:
         self.image_classes = [classes[str(k)][1] for k in range(len(classes))]
         self.resize_value = 224
 
-    def predict(self, payload):
+    def predict(self, json):
         # get request params
-        img_url = payload["url"]
+        img_url = json["url"]
 
         # process the input
         img = get_url_image(img_url)

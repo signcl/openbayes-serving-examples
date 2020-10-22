@@ -1,13 +1,21 @@
-import torch
+# -*- coding: utf-8 -*-
+
+# -- stdlib --
+import json
+
+# -- third party --
+from torchvision import models, transforms
 import cv2
 import numpy as np
-import json
 import requests
-from torchvision import models, transforms
+import torch
 
 import openbayes_serving as serv
 
+# -- own --
 
+
+# -- code --
 def get_url_image(url_image):
     resp = requests.get(url_image, stream=True).raw
     image = np.asarray(bytearray(resp.read()), dtype="uint8")
@@ -43,9 +51,9 @@ class PythonPredictor:
             ]
         )
 
-    def predict(self, payload):
-        # 从 payload.url 获取图片的 url
-        imageurl = payload["url"]
+    def predict(self, json):
+        # 从 json.url 获取图片的 url
+        imageurl = json["url"]
         # 获取图片内容
         image = get_url_image(imageurl)
         # 图片预处理
