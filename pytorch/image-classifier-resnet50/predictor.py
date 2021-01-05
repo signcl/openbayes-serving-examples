@@ -2,6 +2,7 @@
 
 # -- stdlib --
 import json
+import time
 
 # -- third party --
 from torchvision import models, transforms
@@ -17,8 +18,8 @@ import openbayes_serving as serv
 
 # -- code --
 def get_url_image(url_image):
-    resp = requests.get(url_image, stream=True).raw
-    image = np.asarray(bytearray(resp.read()), dtype="uint8")
+    resp = requests.get(url_image).content
+    image = np.asarray(bytearray(resp), dtype="uint8")
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     return image
@@ -55,7 +56,14 @@ class PythonPredictor:
         # 从 json.url 获取图片的 url
         imageurl = json["url"]
         # 获取图片内容
+        b4 = time.time()
         image = get_url_image(imageurl)
+        af = time.time()
+
+        # 事件记录演示
+        serv.emit_event("image-download-time.txt", str(af - b4))
+        serv.emit_event(f"image.jpg", cv2.imencode('.jpg', image)[1].tobytes())
+
         # 图片预处理
         image = self.transform(image)
         image = torch.tensor(image.numpy()[np.newaxis, ...])
@@ -69,6 +77,8 @@ class PythonPredictor:
         # 获取前五分类的名称
         top5_labels = [self.idx2label[idx] for idx in top5_idx]
         top5_labels = top5_labels[::-1]
+
+        serv.emit_event("result.json", top5_labels)
 
         return top5_labels
 

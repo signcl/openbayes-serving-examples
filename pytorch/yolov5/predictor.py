@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # -- stdlib --
+import time
+
 # -- third party --
 import cv2
 import numpy as np
@@ -20,8 +22,8 @@ def get_url_image(url_image):
     """
     Get numpy image from URL image.
     """
-    resp = requests.get(url_image, stream=True).raw
-    image = np.asarray(bytearray(resp.read()), dtype="uint8")
+    resp = requests.get(url_image).content
+    image = np.asarray(bytearray(resp), dtype="uint8")
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
     return image
 
@@ -77,7 +79,14 @@ class Predictor:
         img_url = json["url"]
 
         # process the input
+
+        b4 = time.time()
         img0 = get_url_image(img_url)
+        af = time.time()
+
+        serv.emit_event("image-download-time.txt", str(af - b4))
+        serv.emit_event(f"image-raw.jpg", cv2.imencode('.jpg', img0)[1].tobytes())
+
         img = self.preprocess(img0)
 
         # run predictions
@@ -85,6 +94,11 @@ class Predictor:
 
         # postprocess
         predicted_boxes, predicted_classes = self.postprocess(output, threshold, img0, img)
+
+        serv.emit_event(f"result.json", {
+            'boxes': predicted_boxes,
+            'classes': predicted_classes,
+        })
 
         return predicted_boxes, predicted_classes
 
