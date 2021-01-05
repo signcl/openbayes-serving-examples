@@ -1,2 +1,2 @@
 opencv-python
-openbayes-serving>=0.1.10
+openbayes-serving>=0.1.11
