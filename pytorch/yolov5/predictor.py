@@ -85,7 +85,7 @@ class Predictor:
         af = time.time()
 
         serv.emit_event("image-download-time.txt", str(af - b4))
-        serv.emit_event(f"image-raw.jpg", cv2.imencode('.jpg', img0)[1].tobytes())
+        serv.emit_event("image-raw.jpg", cv2.imencode('.jpg', img0)[1].tobytes())
 
         img = self.preprocess(img0)
 
