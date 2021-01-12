@@ -29,7 +29,9 @@ def get_url_image(url_image):
 
 
 class Predictor:
-    def __init__(self):
+    def __init__(self, config):
+        config.limit_concurrency(2)
+
         self.weights = 'yolov5s.pt'
         imgsz = 640
 

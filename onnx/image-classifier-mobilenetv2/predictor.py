@@ -70,7 +70,9 @@ def postprocess(results):
 
 
 class Predictor:
-    def __init__(self, onnx):
+    def __init__(self, onnx, config):
+        config.limit_concurrency(2)
+
         # onnx client
         self.onnx = onnx
 

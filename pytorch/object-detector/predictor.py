@@ -17,7 +17,9 @@ import openbayes_serving as serv
 
 # -- code --
 class PythonPredictor:
-    def __init__(self):
+    def __init__(self, config):
+        config.limit_concurrency(2)
+
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         print(f"using device: {self.device}")
 

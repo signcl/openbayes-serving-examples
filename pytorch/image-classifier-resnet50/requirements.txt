@@ -3,5 +3,4 @@ torch
 torchvision
 numpy
 requests
-openbayes-serving>=0.1.11
-
+openbayes-serving>=0.1.12
