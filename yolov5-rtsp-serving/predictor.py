@@ -2,6 +2,7 @@
 
 # -- stdlib --
 import logging
+import time
 
 # -- third party --
 from numpy import random
@@ -77,18 +78,24 @@ class Predictor:
         return resp
 
     def run(self):
-        cap = cv2.VideoCapture("rtsp://localhost:8554/basketball")
-        if not cap:
-            raise Exception('打开摄像头失败')
+        while True:
+            try:
+                cap = cv2.VideoCapture("rtsp://localhost:8554/basketball")
+                if not cap:
+                    raise Exception('打开摄像头失败')
 
-        self.cap = cap
-        log.info('成功打开摄像头')
+                self.cap = cap
+                log.info('成功打开摄像头')
 
-        while cap.isOpened():
-            if not cap.grab():
-                raise Exception('抓取摄像头失败')
+                while cap.isOpened():
+                    if not cap.grab():
+                        raise Exception('抓取摄像头失败')
 
-        cap.release()
+                cap.release()
+            except Exception:
+                log.exception('摄像头失效，等 1min 继续')
+
+            time.sleep(60)
 
     def capture(self):
         ret, img = self.cap.retrieve()
