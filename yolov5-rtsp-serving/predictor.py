@@ -36,13 +36,13 @@ class Predictor:
         weights = 'yolov5s.pt'
         self.imgsz = 640
 
-        self.device = torch.device('cpu')
+        self.device = torch.device('cuda')
 
         # Load model
         model = attempt_load(weights, map_location=self.device)  # load FP32 model
         self.stride = int(model.stride.max())  # model stride
         assert self.imgsz % self.stride == 0
-        # model.half()  # to FP16
+        model.half()  # to FP16
 
         # Set Dataloader
         cudnn.benchmark = True  # set True to speed up constant image size inference
@@ -56,12 +56,12 @@ class Predictor:
 
         self.model = model
 
-    def predict(self, params):
+    def predict(self, json):
         if self.cap is None:
             return {}
 
-        with_orig = 'with_original' in params
-        with_tagged = 'with_tagged' in params
+        with_orig = json.get('withOriginal')
+        with_tagged = json.get('withTagged')
 
         rst, orig, tagged = self.detect(with_tagged_image=with_tagged)
         resp = {'detections': rst}
@@ -77,7 +77,10 @@ class Predictor:
         return resp
 
     def run(self):
-        cap = cv2.VideoCapture("rtsp://localhost:8554/mystream")
+        cap = cv2.VideoCapture("rtsp://localhost:8554/basketball")
+        if not cap:
+            raise Exception('打开摄像头失败')
+
         self.cap = cap
         log.info('成功打开摄像头')
 
@@ -104,8 +107,8 @@ class Predictor:
         img = np.ascontiguousarray(img)
 
         img = torch.from_numpy(img).to(self.device)
-        # img = img.half()
-        img = img.float()
+        img = img.half()
+        # img = img.float()
         img /= 255.0  # 0 - 255 to 0.0 - 1.0
         if img.ndimension() == 3:
             img = img.unsqueeze(0)
