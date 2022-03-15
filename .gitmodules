@@ -1,3 +1,0 @@
-[submodule "pytorch/real-cugan/pytorch/real-cugan/ailab"]
-	path = pytorch/real-cugan/pytorch/real-cugan/ailab
-	url = https://github.com/bilibili/ailab.git
