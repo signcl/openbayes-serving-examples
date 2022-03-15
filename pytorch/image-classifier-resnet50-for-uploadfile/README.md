@@ -2,6 +2,8 @@
 
 该示例是 [模型部署 - 快速开始](https://openbayes.com/docs/bayesserving-quickstart/) 的代码库，使用 PyTorch 的预训练模型在 OpenBayes 创建第一个模型部署。
 
+输入为一张图片，输出为分类的 top 5 结果。
+
 ## 下载模型
 
 执行以下命令下载所需模型：
@@ -20,7 +22,7 @@ bash fetch_models.sh
 
 ## 测试
 
-部署完成后可以用下面的命令进行测试:
+部署完成后可以用下面的命令进行测试：
 
 ```bash
 curl "${ENDPOINT}" \
@@ -28,7 +30,7 @@ curl "${ENDPOINT}" \
     -d @sample.jpg
 ```
 
-返回结果:
+返回结果：
 
 ```json
 [
