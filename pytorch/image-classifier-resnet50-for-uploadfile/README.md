@@ -27,7 +27,7 @@ bash fetch_models.sh
 ```bash
 curl "${ENDPOINT}" \
     -X POST -H "Content-Type: application/octet-stream" \
-    -d @sample.jpg
+    --data-binary @sample.jpg
 ```
 
 返回结果：
