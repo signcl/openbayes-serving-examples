@@ -26,9 +26,7 @@ def get_url_image(url_image):
 
 
 class PythonPredictor:
-    def __init__(self, config):
-        config.limit_concurrency(2)
-
+    def __init__(self):
         # 加载分类元数据
         classes = json.load(open('classes.json'))
         self.idx2label = [classes[str(k)][1] for k in range(len(classes))]
