@@ -216,6 +216,12 @@ async def root():
     return {"status": "Fake LLM Server is running"}
 
 
+slow_start_delay = int(os.environ.get("SLOW_START_DELAY", 60))
+if slow_start_delay > 0:
+    print(f"Simulating slow start, sleeping for {slow_start_delay} seconds...", flush=True)
+    time.sleep(slow_start_delay)
+
+
 if __name__ == "__main__":
     import uvicorn
 
