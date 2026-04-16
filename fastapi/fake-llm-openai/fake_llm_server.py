@@ -187,6 +187,30 @@ async def embeddings(request: Request):
     return JSONResponse(response)
 
 
+@app.get("/v1/models")
+@app.get("/models")
+async def list_models():
+    return JSONResponse(
+        {
+            "object": "list",
+            "data": [
+                {
+                    "id": "fake-gpt-3.5",
+                    "object": "model",
+                    "created": int(time.time()),
+                    "owned_by": "fake-server",
+                },
+                {
+                    "id": "fake-embedding-model",
+                    "object": "model",
+                    "created": int(time.time()),
+                    "owned_by": "fake-server",
+                },
+            ],
+        }
+    )
+
+
 @app.get("/")
 async def root():
     return {"status": "Fake LLM Server is running"}
