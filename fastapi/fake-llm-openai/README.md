@@ -73,6 +73,13 @@ curl -X POST http://localhost:8080/v1/embeddings \
   -d '{"model": "fake-embedding-model", "input": "hello world"}'
 ```
 
+模型列表（OpenBayes 靠这个端点识别 LLM serving，见「行为说明」）：
+
+```bash
+curl http://localhost:8080/v1/models
+# {"object": "list", "data": [{"id": "fake-gpt-3.5", ...}]}
+```
+
 健康检查：
 
 ```bash
@@ -101,3 +108,4 @@ curl -X POST https://<serving-url>/v1/chat/completions \
 - chat 流式：先等 `uniform(0.2, 2)` 秒（模拟 TTFT），按词流式返回，最后单独发送一个 `usage` chunk 和 `[DONE]`。
 - embeddings：固定 10 维，按输入文本的 hash 做 seed，相同输入返回相同向量。
 - token 数都是随机生成的，仅用于占位，不反映真实 tokenizer。
+- `GET /v1/models` 不只是为了接口完整：OpenBayes 的 nanny 依次探测 `/models` 和 `/v1/models`，探到模型列表才会装 litellm 并挂上 Langfuse callback。删掉这个端点，serving 照常跑、请求照常有响应，但 Langfuse 里一条数据都不会有。

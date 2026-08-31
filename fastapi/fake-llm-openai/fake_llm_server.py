@@ -187,6 +187,24 @@ async def embeddings(request: Request):
     return JSONResponse(response)
 
 
+@app.get("/v1/models")
+async def list_models():
+    # OpenBayes 的 nanny 依次探测 /models 和 /v1/models 来判断这是不是一个 LLM
+    # serving，探到了才会装 litellm 并挂上 Langfuse callback。少了这个端点，
+    # serving 照常跑，但一条 tracing 数据都不会产生。
+    return {
+        "object": "list",
+        "data": [
+            {
+                "id": "fake-gpt-3.5",
+                "object": "model",
+                "created": int(time.time()),
+                "owned_by": "fake",
+            },
+        ],
+    }
+
+
 @app.get("/")
 async def root():
     return {"status": "Fake LLM Server is running"}
