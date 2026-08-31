@@ -104,7 +104,7 @@ curl -X POST https://<serving-url>/v1/chat/completions \
 ## 行为说明
 
 - **启动延迟（Slow Start）**：启动时默认通过 `time.sleep(60)` 延迟绑定 TCP 端口（默认 60 秒），模拟大模型加载权重的冷启动过程。可通过环境变量 `SLOW_START_DELAY` 自定义时长（设为 `0` 可取消睡眠快速启动）。
-- models 接口：调用 `/v1/models`（或 `/models`）将返回固定模拟的模型列表（如 `fake-gpt-3.5` 和 `fake-embedding-model`）。
+- models 接口：调用 `/v1/models`（或 `/models`）将返回固定模拟的模型列表（如 `fake-gpt-3.5` 和 `fake-embedding-model`）。这个端点不只是为了接口完整：OpenBayes 的 nanny 依次探测 `/models` 和 `/v1/models`，探到模型列表才会装 litellm 并挂上 Langfuse callback。删掉这个端点，serving 照常跑、请求照常有响应，但 Langfuse 里一条数据都不会有。
 - chat 非流式：`uniform(1.2, 12)` 秒延迟后一次性返回。
 - chat 流式：先等 `uniform(0.2, 2)` 秒（模拟 TTFT），按词流式返回，最后单独发送一个 `usage` chunk 和 `[DONE]`。
 - embeddings：固定 10 维，按输入文本的 hash 做 seed，相同输入返回相同向量。
